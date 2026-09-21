@@ -1,4 +1,6 @@
-# 02 · Plan y cierre de alcance
+# 02 · Plan y cierre de alcance 
+
+(Cambios al plan y aclaraciones de uso de la IA en la sección 10)
 
 ## 1. Alcance cerrado
 
@@ -239,22 +241,22 @@ El filtro de CA-4 vive en SQL. Una prueba de CA-4 con un repositorio falso proba
 
 ## 5. Secuencia de trabajo
 
-| # | Tarea | Tiempo | Commit |
-|---|---|---|---|
-| 1 | Hallazgos | 40 min | `docs: hallazgos sobre el extracto del PRD` |
-| 2 | Este plan | 40 min | `docs: plan y cierre de alcance (CA-2, CA-3, CA-4)` |
-| 3 | Base del repositorio: `.gitignore`, `.editorconfig`, `global.json`, `docker-compose.yml`, `.env.example` | 15 min | `chore: base del repositorio y SQL Server en Docker` |
-| 4 | Scripts `001` a `006` (esquema, triggers, índices, catálogos), la tabla `VersionEsquema` y `aplicar.ps1` / `aplicar.sh` | 30 min | `db: esquema versionado con historial inmutable de contactos` |
-| 5 | Script `900_datos_prueba.sql` con **fechas relativas a hoy** (ver el detalle debajo de la tabla) | 20 min | `db: datos de prueba con fechas relativas` |
-| 6 | API base: solución, capas, catálogos, `IExceptionHandler`, configuración | 25 min | `api: capas, catálogos y manejo de errores` |
-| 7 | CA-2: primero las pruebas, después el servicio, el repositorio y el controlador | 30 min | `api: CA-2 registro de contacto` |
-| 8 | CA-3: corrección transaccional y 409 | 35 min | `api: CA-3 corrección versionada con concurrencia optimista` |
-| 9 | CA-4: consulta, paginación y pruebas de integración | 35 min | `api: CA-4 consulta del mes con filtros` |
-| 10 | Web base: proyecto, ESLint, modelos, servicios de API, interceptores, «Actuando como» | 20 min | `web: base Angular con servicios de API e interceptores` |
-| 11 | Web: las tres pantallas y los errores de punta a punta | 45 min | `web: pantallas de contactos del mes, registro y corrección` |
-| 12 | README y prueba de un clon limpio en otra carpeta | 15 min | `docs: README paso a paso` |
-| 13 | Bitácora: matriz y decisiones | 15 min | `docs: bitácora y matriz de trazabilidad` |
-| | **Total** | **≈ 6 h** | |
+| # | Tarea | Tiempo |
+|---|---|---|
+| 1 | Hallazgos | 40 min |
+| 2 | Este plan | 40 min |
+| 3 | Base del repositorio y SQL Server en Docker | 15 min |
+| 4 | Esquema versionado: catálogos, paciente, contacto con historial, triggers, índices y ejecutores de scripts | 30 min |
+| 5 | Datos de prueba con **fechas relativas a hoy** (detalle debajo de la tabla) | 20 min |
+| 6 | API base: capas, catálogos y manejo de errores | 25 min |
+| 7 | CA-2: registro de contacto, primero las pruebas | 30 min |
+| 8 | CA-3: corrección versionada con concurrencia optimista | 35 min |
+| 9 | CA-4: consulta del mes, paginación y pruebas de integración | 35 min |
+| 10 | Web base: servicios de API, interceptores y «Actuando como» | 20 min |
+| 11 | Web: las tres pantallas y los errores de punta a punta | 45 min |
+| 12 | README y prueba de un clon limpio en otra carpeta | 15 min |
+| 13 | Bitácora: matriz de trazabilidad y decisiones | 15 min |
+| | **Total** | **≈ 6 h** |
 
 Los datos de prueba (tarea 5) incluyen:
 
@@ -417,4 +419,11 @@ La matriz definitiva, con commits y el estado de cada criterio, va en `03-bitaco
 
 ## 10. Cambios al plan
 
-Todavía no hay cambios. Cada desvío posterior a este commit se registra aquí con la fecha, qué cambió y por qué.
+Cada desvío posterior al commit del plan se registra aquí con la fecha, qué cambió y por qué.
+
+| Fecha | Qué cambió | Por qué |
+|---|---|---|
+| 2026-09-21 | La sección 5 conserva el orden de las tareas y el tiempo de cada una, pero ya no lista el mensaje de commit ni los archivos de cada paso. | Ese detalle es una métrica interna de ejecución, no una decisión de plan. La evidencia de cómo se ejecutó está en el historial de commits. |
+| 2026-09-21 | Además de los scripts `001` a `006`, se agregó `000_base_de_datos.sql`, que crea la base de datos y la tabla `VersionEsquema`. | El ejecutor necesita la tabla de registro antes de decidir qué scripts aplicar. `000` es idempotente, se ejecuta siempre y no se registra. |
+| 2026-09-21 | La restricción del teléfono es más estricta que la de la sección 3.2: «+» seguido de 7 a 15 dígitos, sin espacios ni otros caracteres, y el primer dígito no puede ser 0. | `LIKE '+[0-9]%'` aceptaba valores como «+57 300 123». La regla nueva es la de E.164. |
+
