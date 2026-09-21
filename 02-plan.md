@@ -421,9 +421,5 @@ La matriz definitiva, con commits y el estado de cada criterio, va en `03-bitaco
 
 Cada desvío posterior al commit del plan se registra aquí con la fecha, qué cambió y por qué.
 
-| Fecha | Qué cambió | Por qué |
-|---|---|---|
-| 2026-09-21 | La sección 5 conserva el orden de las tareas y el tiempo de cada una, pero ya no lista el mensaje de commit ni los archivos de cada paso. | Ese detalle es una métrica interna de ejecución, no una decisión de plan. La evidencia de cómo se ejecutó está en el historial de commits. |
-| 2026-09-21 | Además de los scripts `001` a `006`, se agregó `000_base_de_datos.sql`, que crea la base de datos y la tabla `VersionEsquema`. | El ejecutor necesita la tabla de registro antes de decidir qué scripts aplicar. `000` es idempotente, se ejecuta siempre y no se registra. |
-| 2026-09-21 | La restricción del teléfono es más estricta que la de la sección 3.2: «+» seguido de 7 a 15 dígitos, sin espacios ni otros caracteres, y el primer dígito no puede ser 0. | `LIKE '+[0-9]%'` aceptaba valores como «+57 300 123». La regla nueva es la de E.164. |
+- La sección 5 conserva el orden de las tareas y el tiempo de cada una, pero ya no lista el mensaje de commit ni los archivos de cada paso. Ese detalle es una métrica interna de ejecución, no una decisión de plan. La evidencia de cómo se ejecutó está en el historial de commits.
 
