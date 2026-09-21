@@ -1,0 +1,24 @@
+<header class="barra">
+  <span class="marca">Seguimiento de pacientes</span>
+
+  <div class="actuando-como">
+    <label for="gestor-actual">Actuando como</label>
+    <select id="gestor-actual" (change)="alCambiarGestor($event)">
+      <option value="" [selected]="gestorActual.gestorId() === null">Elige un gestor</option>
+      @for (gestor of gestores(); track gestor.id) {
+        <option [value]="gestor.id" [selected]="gestor.id === gestorActual.gestorId()">
+          {{ gestor.nombre }}
+        </option>
+      }
+    </select>
+    <small>Simulación: no hay autenticación.</small>
+  </div>
+</header>
+
+@if (errorCatalogos(); as error) {
+  <p class="alerta alerta-error" role="alert">{{ error }}</p>
+}
+
+<main>
+  <router-outlet />
+</main>

@@ -1,0 +1,32 @@
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primario);
+  color: #fff;
+}
+
+.marca {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.actuando-como {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+}
+
+.actuando-como small {
+  opacity: 0.85;
+}
+
+main {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
