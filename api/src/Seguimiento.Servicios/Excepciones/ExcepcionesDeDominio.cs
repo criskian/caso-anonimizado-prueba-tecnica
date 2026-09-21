@@ -11,13 +11,13 @@ public abstract class ExcepcionDeDominio(string codigo, string mensaje) : Except
 }
 
 /// <summary>Los datos recibidos no son válidos (HTTP 400). Incluye los errores por campo.</summary>
-public sealed class ValidacionException(IReadOnlyDictionary<string, string[]> errores)
-    : ExcepcionDeDominio("VALIDACION", "Uno o más datos no son válidos.")
+public sealed class ValidacionException(IReadOnlyDictionary<string, string[]> errores, string codigo = "VALIDACION")
+    : ExcepcionDeDominio(codigo, "Uno o más datos no son válidos.")
 {
     public IReadOnlyDictionary<string, string[]> Errores { get; } = errores;
 
-    public ValidacionException(string campo, string error)
-        : this(new Dictionary<string, string[]> { [campo] = [error] })
+    public ValidacionException(string campo, string error, string codigo = "VALIDACION")
+        : this(new Dictionary<string, string[]> { [campo] = [error] }, codigo)
     {
     }
 }

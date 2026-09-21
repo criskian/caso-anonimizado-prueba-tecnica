@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Seguimiento.Api;
+using Seguimiento.Api.Json;
 using Seguimiento.Datos;
 using Seguimiento.Servicios;
 
@@ -14,7 +16,25 @@ if (string.IsNullOrWhiteSpace(cadenaConexion))
         "o con la variable de entorno ConnectionStrings__Seguimiento (ver README).");
 }
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opciones => opciones.JsonSerializerOptions.Converters.Add(new FechaConDesfaseConverter()))
+    .ConfigureApiBehaviorOptions(opciones =>
+    {
+        // Los 400 que genera ASP.NET (JSON mal formado, campos obligatorios) salen con el
+        // mismo formato que los de ValidacionException, para que la interfaz los trate igual.
+        opciones.InvalidModelStateResponseFactory = contexto =>
+        {
+            var detalle = new ValidationProblemDetails(contexto.ModelState)
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Datos inválidos",
+                Detail = "Uno o más datos no son válidos.",
+            };
+            detalle.Extensions["codigo"] = "VALIDACION";
+            return new BadRequestObjectResult(detalle) { ContentTypes = { "application/problem+json" } };
+        };
+    });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ManejadorExcepciones>();
 builder.Services.AddEndpointsApiExplorer();

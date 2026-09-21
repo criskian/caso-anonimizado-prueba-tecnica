@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Seguimiento.Servicios.Catalogos;
+using Seguimiento.Servicios.Contactos;
+using Seguimiento.Servicios.Pacientes;
 
 namespace Seguimiento.Datos;
 
@@ -9,6 +11,8 @@ public static class RegistroDatos
     {
         servicios.AddSingleton(new FabricaConexiones(cadenaConexion));
         servicios.AddScoped<ICatalogoRepositorio, CatalogoRepositorio>();
+        servicios.AddScoped<IPacienteRepositorio, PacienteRepositorio>();
+        servicios.AddScoped<IContactoRepositorio, ContactoRepositorio>();
         return servicios;
     }
 }
