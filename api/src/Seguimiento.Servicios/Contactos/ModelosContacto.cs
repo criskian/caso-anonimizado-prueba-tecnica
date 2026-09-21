@@ -19,6 +19,29 @@ public sealed record ContactoARegistrar(
     string Resultado,
     string? Observacion);
 
+/// <summary>
+/// Datos que envía el gestor para corregir un contacto (CA-3). Trae los valores completos
+/// de la nueva versión, la versión sobre la que corrige y el motivo.
+/// </summary>
+public sealed record CorreccionContacto(
+    int VersionEsperada,
+    DateTimeOffset FechaContacto,
+    string Canal,
+    string Resultado,
+    string? Observacion,
+    string? Motivo);
+
+/// <summary>Corrección ya validada, lista para guardarse como versión VersionEsperada + 1.</summary>
+public sealed record CorreccionARegistrar(
+    long ContactoId,
+    int VersionEsperada,
+    int GestorId,
+    DateTimeOffset FechaContacto,
+    string Canal,
+    string Resultado,
+    string? Observacion,
+    string Motivo);
+
 /// <summary>Lo que el servicio necesita saber del paciente para aceptar un contacto.</summary>
 public sealed record PacienteParaContacto(int Id, string Estado, DateOnly FechaIngresoPrograma)
 {

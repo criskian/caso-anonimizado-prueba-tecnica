@@ -17,6 +17,20 @@ public sealed record RegistrarContactoDto(
         new(PacienteId!.Value, FechaContacto!.Value, Canal!, Resultado!, Observacion);
 }
 
+// El motivo no se marca como obligatorio aquí: su regla (10 a 500 caracteres) es de negocio
+// y la aplica ContactoService, que es donde se prueba.
+public sealed record CorregirContactoDto(
+    [Required(ErrorMessage = "Indica sobre qué versión haces la corrección.")] int? VersionEsperada,
+    [Required(ErrorMessage = "Indica la fecha y hora del contacto.")] DateTimeOffset? FechaContacto,
+    [Required(ErrorMessage = "Indica el canal.")] string? Canal,
+    [Required(ErrorMessage = "Indica el resultado.")] string? Resultado,
+    string? Observacion,
+    string? Motivo)
+{
+    public CorreccionContacto ACorreccion() =>
+        new(VersionEsperada!.Value, FechaContacto!.Value, Canal!, Resultado!, Observacion, Motivo);
+}
+
 public sealed record ReferenciaDto(int Id, string Nombre);
 
 public sealed record PacienteDelContactoDto(int Id, string Nombre, string Ciudad);

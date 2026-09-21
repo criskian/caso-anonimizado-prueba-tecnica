@@ -16,5 +16,12 @@ public interface IContactoRepositorio
     /// <summary>Guarda el contacto y su versión 1 en una sola transacción. Devuelve el Id.</summary>
     Task<long> RegistrarAsync(ContactoARegistrar contacto, CancellationToken cancelacion);
 
+    /// <summary>
+    /// Guarda la corrección como versión nueva y actualiza la proyección en una sola transacción,
+    /// solo si la versión vigente sigue siendo VersionEsperada. Devuelve false si otra
+    /// corrección llegó antes (concurrencia optimista); en ese caso no escribe nada.
+    /// </summary>
+    Task<bool> CorregirAsync(CorreccionARegistrar correccion, CancellationToken cancelacion);
+
     Task<ContactoDetalle?> ObtenerDetalleAsync(long contactoId, CancellationToken cancelacion);
 }

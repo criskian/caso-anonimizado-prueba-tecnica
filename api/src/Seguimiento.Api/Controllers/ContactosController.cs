@@ -22,6 +22,21 @@ public sealed class ContactosController(ContactoService servicio) : ControllerBa
         return CreatedAtAction(nameof(Obtener), new { id = detalle.Id }, ContactoDetalleDto.Desde(detalle));
     }
 
+    /// <summary>
+    /// CA-3: corrige un contacto creando una versión nueva. Es un POST a un subrecurso y no
+    /// un PUT porque no reemplaza el contacto: agrega una corrección a su historial.
+    /// </summary>
+    [HttpPost("{id:long}/correcciones")]
+    public async Task<ActionResult<ContactoDetalleDto>> Corregir(
+        long id,
+        [FromHeader(Name = CabeceraGestor)] string? gestorId,
+        [FromBody] CorregirContactoDto cuerpo,
+        CancellationToken cancelacion)
+    {
+        var detalle = await servicio.CorregirAsync(gestorId, id, cuerpo.ACorreccion(), cancelacion);
+        return Ok(ContactoDetalleDto.Desde(detalle));
+    }
+
     /// <summary>Valores vigentes del contacto y su historial de versiones.</summary>
     [HttpGet("{id:long}")]
     public async Task<ActionResult<ContactoDetalleDto>> Obtener(long id, CancellationToken cancelacion) =>

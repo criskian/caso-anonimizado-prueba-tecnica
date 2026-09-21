@@ -53,6 +53,49 @@ public sealed class ContactoRepositorio(FabricaConexiones fabrica) : IContactoRe
         return await conexion.ExecuteScalarAsync<long>(new CommandDefinition(sql, contacto, cancellationToken: cancelacion));
     }
 
+    public async Task<bool> CorregirAsync(CorreccionARegistrar correccion, CancellationToken cancelacion)
+    {
+        // Concurrencia optimista: el UPDATE solo afecta la fila si la versión vigente sigue
+        // siendo la que vio el usuario. Comprobar y bloquear ocurren en la misma instrucción,
+        // así que READ COMMITTED basta: si dos correcciones llegan a la vez, la segunda espera
+        // el bloqueo, vuelve a evaluar el WHERE con la versión ya incrementada y no afecta filas.
+        // La restricción UNIQUE (ContactoId, NumeroVersion) es la segunda red de seguridad.
+        const string sql = """
+            SET XACT_ABORT ON;
+            BEGIN TRANSACTION;
+
+            UPDATE dbo.Contacto
+            SET FechaContacto = @FechaContacto,
+                CanalCodigo = @Canal,
+                ResultadoCodigo = @Resultado,
+                Observacion = @Observacion,
+                VersionActual = VersionActual + 1,
+                ActualizadoEnUtc = SYSUTCDATETIME()
+            WHERE Id = @ContactoId AND VersionActual = @VersionEsperada;
+
+            IF @@ROWCOUNT = 0
+            BEGIN
+                ROLLBACK TRANSACTION;
+                SELECT CAST(0 AS BIT);
+                RETURN;
+            END;
+
+            INSERT INTO dbo.ContactoVersion (ContactoId, NumeroVersion, FechaContacto, CanalCodigo, ResultadoCodigo,
+                                             Observacion, MotivoCorreccion, RegistradoPorGestorId, RegistradoEnUtc)
+            SELECT Id, VersionActual, FechaContacto, CanalCodigo, ResultadoCodigo, Observacion,
+                   @Motivo, @GestorId, ActualizadoEnUtc
+            FROM dbo.Contacto
+            WHERE Id = @ContactoId;
+
+            COMMIT TRANSACTION;
+
+            SELECT CAST(1 AS BIT);
+            """;
+
+        await using var conexion = fabrica.Crear();
+        return await conexion.ExecuteScalarAsync<bool>(new CommandDefinition(sql, correccion, cancellationToken: cancelacion));
+    }
+
     public async Task<ContactoDetalle?> ObtenerDetalleAsync(long contactoId, CancellationToken cancelacion)
     {
         const string sql = """
