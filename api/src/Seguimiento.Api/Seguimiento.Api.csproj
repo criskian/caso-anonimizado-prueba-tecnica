@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- Permite guardar la cadena de conexión con «dotnet user-secrets», fuera del repositorio. -->
+    <UserSecretsId>seguimiento-api-7c1f3b2e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Seguimiento.Servicios\Seguimiento.Servicios.csproj" />
+    <ProjectReference Include="..\Seguimiento.Datos\Seguimiento.Datos.csproj" />
+  </ItemGroup>
+
+</Project>
