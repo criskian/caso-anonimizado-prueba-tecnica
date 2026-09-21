@@ -422,4 +422,10 @@ La matriz definitiva, con commits y el estado de cada criterio, va en `03-bitaco
 Cada desvío posterior al commit del plan se registra aquí con la fecha, qué cambió y por qué.
 
 - La sección 5 conserva el orden de las tareas y el tiempo de cada una, pero ya no lista el mensaje de commit ni los archivos de cada paso. Ese detalle es una métrica interna de ejecución, no una decisión de plan. La evidencia de cómo se ejecutó está en el historial de commits.
+- `CA2_RegistrarContacto_CreaVersionUnoSinMotivo` pasó de prueba unitaria a prueba de integración. La versión 1 la crea el SQL del repositorio: con un repositorio falso la prueba solo verificaría el propio falso.
+- Dos pruebas cambiaron de nombre para describir mejor lo que cubren:
+  - `CA3_Corregir_SinMotivo_LanzaValidacion` ahora es `CA3_Corregir_SinMotivoSuficiente_LanzaValidacion`, porque también cubre el motivo vacío y el motivo corto.
+  - `CA3_BaseDeDatos_RechazaUpdateYDeleteSobreVersiones` ahora es `CA3_BaseDeDatos_RechazaReescribirElHistorial`, porque también cubre el borrado de contactos y el cambio de paciente o de autor.
+- Se agregaron pruebas que no estaban listadas en la sección 4.7, sin agregar funcionalidad: las correcciones simultáneas contra SQL Server real y la paginación de la vista del mes. Las reglas de la sección 4.4 tienen además sus casos de borde, como la tolerancia de reloj o conservar un canal retirado.
+- `GET /api/contactos/{id}` se implementó junto con CA-2 y no con CA-3, porque la cabecera `Location` de la respuesta 201 del registro apunta a ese endpoint.
 
