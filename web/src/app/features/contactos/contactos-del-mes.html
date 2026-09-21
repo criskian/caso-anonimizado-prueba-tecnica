@@ -1,0 +1,94 @@
+<div class="encabezado">
+  <h1>Contactos del mes</h1>
+  <a class="boton" routerLink="/contactos/nuevo">Registrar contacto</a>
+</div>
+
+<form class="filtros" [formGroup]="filtros">
+  <div class="campo">
+    <label for="filtro-mes">Mes</label>
+    <input id="filtro-mes" type="month" formControlName="mes" />
+  </div>
+  <div class="campo">
+    <label for="filtro-gestor">Gestor</label>
+    <select id="filtro-gestor" formControlName="gestorId">
+      <option [ngValue]="null">Todos</option>
+      @for (gestor of catalogos()?.gestores; track gestor.id) {
+        <option [ngValue]="gestor.id">{{ gestor.nombre }}</option>
+      }
+    </select>
+  </div>
+  <div class="campo">
+    <label for="filtro-ciudad">Ciudad</label>
+    <select id="filtro-ciudad" formControlName="ciudadId">
+      <option [ngValue]="null">Todas</option>
+      @for (ciudad of catalogos()?.ciudades; track ciudad.id) {
+        <option [ngValue]="ciudad.id">{{ ciudad.nombre }} ({{ ciudad.paisCodigo }})</option>
+      }
+    </select>
+  </div>
+</form>
+
+@if (error(); as mensaje) {
+  <p class="alerta alerta-error" role="alert">{{ mensaje }}</p>
+}
+
+@if (resultado(); as datos) {
+  <p class="resumen" aria-live="polite">
+    {{ datos.total }} {{ datos.total === 1 ? 'contacto' : 'contactos' }} en {{ datos.mes }}
+    @if (cargando()) {
+      · actualizando…
+    }
+  </p>
+
+  @if (datos.items.length > 0) {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Paciente</th>
+          <th scope="col">Ciudad</th>
+          <th scope="col">Gestor</th>
+          <th scope="col">Canal</th>
+          <th scope="col">Resultado</th>
+          <th scope="col"><span class="oculto">Detalle</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (contacto of datos.items; track contacto.id) {
+          <tr>
+            <td>{{ formatearFecha(contacto.fechaContacto) }}</td>
+            <td>{{ contacto.paciente.nombre }}</td>
+            <td>{{ contacto.ciudad.nombre }}</td>
+            <td>{{ contacto.gestor.nombre }}</td>
+            <td>{{ contacto.canal.nombre }}</td>
+            <td>
+              {{ contacto.resultado.nombre }}
+              @if (contacto.corregido) {
+                <span class="etiqueta">corregido v{{ contacto.versionActual }}</span>
+              }
+            </td>
+            <td><a [routerLink]="['/contactos', contacto.id]">Ver</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <nav class="paginacion" aria-label="Páginas">
+      <button type="button" [disabled]="pagina() <= 1" (click)="irAPagina(pagina() - 1)">
+        Anterior
+      </button>
+      <span>Página {{ pagina() }} de {{ totalPaginas() }}</span>
+      <button
+        type="button"
+        [disabled]="pagina() >= totalPaginas()"
+        (click)="irAPagina(pagina() + 1)"
+      >
+        Siguiente
+      </button>
+    </nav>
+  } @else {
+    <p class="vacio">No hay contactos que cumplan los filtros.</p>
+  }
+} @else if (cargando()) {
+  <p class="resumen">Cargando…</p>
+}

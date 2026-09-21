@@ -1,0 +1,107 @@
+<div class="encabezado">
+  <h1>Registrar contacto</h1>
+  <a routerLink="/contactos">Volver a los contactos del mes</a>
+</div>
+
+@if (gestorActual.gestorId() === null) {
+  <p class="alerta alerta-aviso" role="status">
+    Elige en «Actuando como» qué gestor registra el contacto.
+  </p>
+}
+
+@if (errorGeneral(); as mensaje) {
+  <p class="alerta alerta-error" role="alert">{{ mensaje }}</p>
+}
+
+<form class="formulario" [formGroup]="formulario" (ngSubmit)="registrar()" novalidate>
+  <div class="campo">
+    @if (pacienteElegido(); as paciente) {
+      <span class="etiqueta-campo">Paciente</span>
+      <p class="paciente-elegido">
+        {{ paciente.nombre }} · {{ paciente.documento }} · {{ paciente.ciudad }}
+        <button type="button" (click)="cambiarPaciente()">Cambiar</button>
+      </p>
+    } @else {
+      <label for="busqueda">Paciente</label>
+      <input
+        id="busqueda"
+        type="search"
+        [formControl]="busqueda"
+        placeholder="Nombre o documento (mínimo 2 caracteres)"
+        autocomplete="off"
+      />
+      @if (pacientes().length > 0) {
+        <ul class="resultados-busqueda">
+          @for (paciente of pacientes(); track paciente.id) {
+            <li>
+              <button type="button" (click)="elegirPaciente(paciente)">
+                {{ paciente.nombre }} · {{ paciente.documento }} · {{ paciente.ciudad }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    }
+    @if (formulario.controls.pacienteId.touched && formulario.controls.pacienteId.invalid) {
+      <p class="error-campo">
+        {{ formulario.controls.pacienteId.errors?.['servidor'] ?? 'Elige un paciente.' }}
+      </p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="fecha">Fecha y hora del contacto (hora de Colombia, Perú y Ecuador)</label>
+    <input id="fecha" type="datetime-local" formControlName="fechaContacto" [max]="ahora" />
+    @if (formulario.controls.fechaContacto.touched && formulario.controls.fechaContacto.invalid) {
+      <p class="error-campo">
+        {{ formulario.controls.fechaContacto.errors?.['servidor'] ?? 'Indica la fecha y hora.' }}
+      </p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="canal">Canal</label>
+    <select id="canal" formControlName="canal">
+      <option value="">Elige el canal</option>
+      @for (canal of catalogos()?.canales; track canal.codigo) {
+        <option [value]="canal.codigo">{{ canal.nombre }}</option>
+      }
+    </select>
+    @if (formulario.controls.canal.touched && formulario.controls.canal.invalid) {
+      <p class="error-campo">
+        {{ formulario.controls.canal.errors?.['servidor'] ?? 'Elige el canal.' }}
+      </p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="resultado">Resultado</label>
+    <select id="resultado" formControlName="resultado">
+      <option value="">Elige el resultado</option>
+      @for (resultado of catalogos()?.resultados; track resultado.codigo) {
+        <option [value]="resultado.codigo">{{ resultado.nombre }}</option>
+      }
+    </select>
+    @if (formulario.controls.resultado.touched && formulario.controls.resultado.invalid) {
+      <p class="error-campo">
+        {{ formulario.controls.resultado.errors?.['servidor'] ?? 'Elige el resultado.' }}
+      </p>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="observacion">Observación (opcional)</label>
+    <textarea id="observacion" rows="3" formControlName="observacion"></textarea>
+    @if (formulario.controls.observacion.invalid) {
+      <p class="error-campo">
+        {{ formulario.controls.observacion.errors?.['servidor'] ?? 'Máximo 500 caracteres.' }}
+      </p>
+    }
+  </div>
+
+  <div class="acciones">
+    <button type="submit" class="boton" [disabled]="enviando()">
+      {{ enviando() ? 'Registrando…' : 'Registrar contacto' }}
+    </button>
+  </div>
+</form>

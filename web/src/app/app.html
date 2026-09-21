@@ -1,6 +1,17 @@
 <header class="barra">
   <span class="marca">Seguimiento de pacientes</span>
 
+  <nav class="navegacion" aria-label="Principal">
+    <a
+      routerLink="/contactos"
+      routerLinkActive="activo"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Contactos del mes
+    </a>
+    <a routerLink="/contactos/nuevo" routerLinkActive="activo">Registrar contacto</a>
+  </nav>
+
   <div class="actuando-como">
     <label for="gestor-actual">Actuando como</label>
     <select id="gestor-actual" (change)="alCambiarGestor($event)">

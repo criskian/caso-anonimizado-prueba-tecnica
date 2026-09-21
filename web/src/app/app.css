@@ -14,6 +14,22 @@
   font-size: 1.1rem;
 }
 
+.navegacion {
+  display: flex;
+  gap: 1rem;
+}
+
+.navegacion a {
+  color: #fff;
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.navegacion a.activo {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 .actuando-como {
   display: flex;
   flex-wrap: wrap;

@@ -5,6 +5,10 @@
   --color-fondo: #f5f7fa;
   --color-error: #b42318;
   --color-error-fondo: #fef3f2;
+  --color-aviso: #93370d;
+  --color-aviso-fondo: #fffaeb;
+  --color-exito: #067647;
+  --color-exito-fondo: #ecfdf3;
   font-family:
     system-ui,
     -apple-system,
@@ -43,4 +47,175 @@ button {
 .alerta-error {
   color: var(--color-error);
   background: var(--color-error-fondo);
+}
+
+.alerta-aviso {
+  color: var(--color-aviso);
+  background: var(--color-aviso-fondo);
+}
+
+.alerta-exito {
+  color: var(--color-exito);
+  background: var(--color-exito-fondo);
+}
+
+main .alerta {
+  margin: 1rem 0;
+}
+
+.alerta p {
+  margin: 0 0 0.5rem;
+}
+
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin-top: 2rem;
+}
+
+.boton {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-primario);
+  color: #fff;
+  text-decoration: none;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.formulario {
+  display: grid;
+  gap: 1rem;
+  max-width: 40rem;
+}
+
+.campo {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.campo label,
+.etiqueta-campo {
+  font-weight: 600;
+}
+
+.error-campo {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+.ayuda,
+.resumen,
+.vacio {
+  color: #52606d;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.tabla th,
+.tabla td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-borde);
+  text-align: left;
+  vertical-align: top;
+}
+
+.etiqueta {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso);
+  font-size: 0.8rem;
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+.datos dt {
+  font-weight: 600;
+}
+
+.datos dd {
+  margin: 0;
+}
+
+.resultados-busqueda {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.resultados-busqueda button {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: none;
+  text-align: left;
+}
+
+.resultados-busqueda button:hover,
+.resultados-busqueda button:focus {
+  background: var(--color-fondo);
+}
+
+.paciente-elegido {
+  margin: 0;
+}
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (max-width: 40rem) {
+  .tabla {
+    display: block;
+    overflow-x: auto;
+  }
 }

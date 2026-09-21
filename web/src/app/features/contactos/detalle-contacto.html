@@ -1,0 +1,152 @@
+<div class="encabezado">
+  <h1>Contacto {{ id() }}</h1>
+  <a routerLink="/contactos">Volver a los contactos del mes</a>
+</div>
+
+@if (exito(); as mensaje) {
+  <p class="alerta alerta-exito" role="status">{{ mensaje }}</p>
+}
+
+@if (errorCarga(); as mensaje) {
+  <p class="alerta alerta-error" role="alert">{{ mensaje }}</p>
+}
+
+@if (detalle(); as contacto) {
+  <section aria-labelledby="titulo-vigente">
+    <h2 id="titulo-vigente">Datos vigentes (versión {{ contacto.versionActual }})</h2>
+    <dl class="datos">
+      <dt>Paciente</dt>
+      <dd>{{ contacto.paciente.nombre }} · {{ contacto.paciente.ciudad }}</dd>
+      <dt>Registrado por</dt>
+      <dd>{{ contacto.gestor.nombre }}</dd>
+      <dt>Fecha del contacto</dt>
+      <dd>{{ formatearFecha(contacto.fechaContacto) }}</dd>
+      <dt>Canal</dt>
+      <dd>{{ contacto.canal.nombre }}</dd>
+      <dt>Resultado</dt>
+      <dd>{{ contacto.resultado.nombre }}</dd>
+      <dt>Observación</dt>
+      <dd>{{ contacto.observacion ?? '—' }}</dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="titulo-correccion">
+    <h2 id="titulo-correccion">Corregir</h2>
+    <p class="ayuda">
+      La corrección crea una versión nueva. La versión anterior no se borra: queda en el historial
+      con quién la corrigió y por qué.
+    </p>
+
+    @if (gestorActual.gestorId() === null) {
+      <p class="alerta alerta-aviso" role="status">
+        Elige en «Actuando como» qué gestor hace la corrección.
+      </p>
+    }
+
+    @if (conflicto(); as mensaje) {
+      <div class="alerta alerta-aviso" role="alert">
+        <p>{{ mensaje }}</p>
+        <button type="button" (click)="recargar()">Recargar el contacto</button>
+      </div>
+    }
+
+    @if (errorGeneral(); as mensaje) {
+      <p class="alerta alerta-error" role="alert">{{ mensaje }}</p>
+    }
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="corregir()" novalidate>
+      <div class="campo">
+        <label for="fecha">Fecha y hora del contacto (hora de Colombia, Perú y Ecuador)</label>
+        <input id="fecha" type="datetime-local" formControlName="fechaContacto" [max]="ahora" />
+        @if (
+          formulario.controls.fechaContacto.touched && formulario.controls.fechaContacto.invalid
+        ) {
+          <p class="error-campo">
+            {{
+              formulario.controls.fechaContacto.errors?.['servidor'] ?? 'Indica la fecha y hora.'
+            }}
+          </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="canal">Canal</label>
+        <select id="canal" formControlName="canal">
+          @for (canal of catalogos()?.canales; track canal.codigo) {
+            <option [value]="canal.codigo">{{ canal.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="resultado">Resultado</label>
+        <select id="resultado" formControlName="resultado">
+          @for (resultado of catalogos()?.resultados; track resultado.codigo) {
+            <option [value]="resultado.codigo">{{ resultado.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="observacion">Observación (opcional)</label>
+        <textarea id="observacion" rows="2" formControlName="observacion"></textarea>
+        @if (formulario.controls.observacion.invalid) {
+          <p class="error-campo">
+            {{ formulario.controls.observacion.errors?.['servidor'] ?? 'Máximo 500 caracteres.' }}
+          </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="motivo">Motivo de la corrección</label>
+        <textarea id="motivo" rows="2" formControlName="motivo"></textarea>
+        @if (formulario.controls.motivo.touched && formulario.controls.motivo.invalid) {
+          <p class="error-campo">
+            {{
+              formulario.controls.motivo.errors?.['servidor'] ??
+                'Explica el motivo en 10 a 500 caracteres.'
+            }}
+          </p>
+        }
+      </div>
+
+      <div class="acciones">
+        <button type="submit" class="boton" [disabled]="enviando()">
+          {{ enviando() ? 'Guardando…' : 'Guardar corrección' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section aria-labelledby="titulo-historial">
+    <h2 id="titulo-historial">Historial de versiones</h2>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th scope="col">Versión</th>
+          <th scope="col">Fecha del contacto</th>
+          <th scope="col">Canal</th>
+          <th scope="col">Resultado</th>
+          <th scope="col">Observación</th>
+          <th scope="col">Motivo de la corrección</th>
+          <th scope="col">Registrada por</th>
+          <th scope="col">Registrada el</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (version of contacto.historial; track version.numeroVersion) {
+          <tr>
+            <td>v{{ version.numeroVersion }}</td>
+            <td>{{ formatearFecha(version.fechaContacto) }}</td>
+            <td>{{ version.canal.nombre }}</td>
+            <td>{{ version.resultado.nombre }}</td>
+            <td>{{ version.observacion ?? '—' }}</td>
+            <td>{{ version.motivoCorreccion ?? 'Registro original' }}</td>
+            <td>{{ version.registradoPor.nombre }}</td>
+            <td>{{ formatearFecha(version.registradoEnUtc) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+}

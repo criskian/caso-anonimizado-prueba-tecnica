@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CatalogosService } from './core/api/catalogos.service';
 import { esErrorApi } from './core/errores/error-api';
 import { Referencia } from './core/modelos/api';
@@ -8,7 +8,7 @@ import { GestorActualService } from './core/sesion/gestor-actual.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
