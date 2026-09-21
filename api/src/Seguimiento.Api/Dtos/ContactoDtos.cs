@@ -47,6 +47,33 @@ public sealed record VersionContactoDto(
     ReferenciaDto RegistradoPor,
     DateTime RegistradoEnUtc);
 
+public sealed record ContactoMesItemDto(
+    long Id,
+    DateTimeOffset FechaContacto,
+    ReferenciaDto Paciente,
+    ReferenciaDto Ciudad,
+    ReferenciaDto Gestor,
+    CodigoNombreDto Canal,
+    CodigoNombreDto Resultado,
+    int VersionActual,
+    bool Corregido);
+
+public sealed record ContactosDelMesDto(string Mes, int Pagina, int Tamano, int Total, IReadOnlyList<ContactoMesItemDto> Items)
+{
+    public static ContactosDelMesDto Desde(PaginaContactosDelMes p) => new(
+        p.Mes, p.Pagina, p.Tamano, p.Total,
+        p.Items.Select(c => new ContactoMesItemDto(
+            c.Id,
+            c.FechaContacto,
+            new ReferenciaDto(c.PacienteId, c.PacienteNombre),
+            new ReferenciaDto(c.CiudadId, c.Ciudad),
+            new ReferenciaDto(c.GestorId, c.GestorNombre),
+            new CodigoNombreDto(c.CanalCodigo, c.CanalNombre),
+            new CodigoNombreDto(c.ResultadoCodigo, c.ResultadoNombre),
+            c.VersionActual,
+            c.VersionActual > 1)).ToList());
+}
+
 public sealed record ContactoDetalleDto(
     long Id,
     PacienteDelContactoDto Paciente,

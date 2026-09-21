@@ -6,10 +6,27 @@ namespace Seguimiento.Api.Controllers;
 
 [ApiController]
 [Route("api/contactos")]
-public sealed class ContactosController(ContactoService servicio) : ControllerBase
+public sealed class ContactosController(ContactoService servicio, ContactosDelMesService contactosDelMes) : ControllerBase
 {
     // Identidad simulada (H-11): la interfaz envía el gestor elegido en «Actuando como».
     public const string CabeceraGestor = "X-Gestor-Id";
+
+    /// <summary>
+    /// CA-4: contactos de un mes (AAAA-MM; por defecto, el actual en hora del programa),
+    /// filtrables por gestor y por ciudad. Si vienen los dos filtros se combinan con Y.
+    /// </summary>
+    [HttpGet]
+    public async Task<ActionResult<ContactosDelMesDto>> ConsultarMes(
+        [FromQuery] string? mes,
+        [FromQuery] int? gestorId,
+        [FromQuery] int? ciudadId,
+        [FromQuery] int? pagina,
+        [FromQuery] int? tamano,
+        CancellationToken cancelacion)
+    {
+        var resultado = await contactosDelMes.ConsultarAsync(mes, gestorId, ciudadId, pagina, tamano, cancelacion);
+        return Ok(ContactosDelMesDto.Desde(resultado));
+    }
 
     /// <summary>CA-2: registra un contacto y devuelve su detalle con la versión 1.</summary>
     [HttpPost]

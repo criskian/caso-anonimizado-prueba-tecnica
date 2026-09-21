@@ -13,6 +13,7 @@ public static class RegistroServicios
         servicios.AddScoped<CatalogoService>();
         servicios.AddScoped<PacienteService>();
         servicios.AddScoped<ContactoService>();
+        servicios.AddScoped<ContactosDelMesService>();
         return servicios;
     }
 }
