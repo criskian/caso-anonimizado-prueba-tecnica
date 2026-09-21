@@ -1,0 +1,5 @@
+# Finales de línea LF en el repositorio para todo el texto, sin importar el sistema operativo
+* text=auto eol=lf
+
+# Los scripts de PowerShell se abren mejor en Windows con CRLF
+*.ps1 text eol=crlf
