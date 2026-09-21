@@ -25,7 +25,14 @@ builder.Services
         // mismo formato que los de ValidacionException, para que la interfaz los trate igual.
         opciones.InvalidModelStateResponseFactory = contexto =>
         {
-            var detalle = new ValidationProblemDetails(contexto.ModelState)
+            // Las claves de ASP.NET vienen como «VersionEsperada» o «$.fechaContacto»; se
+            // normalizan a camelCase («versionEsperada», «fechaContacto»), igual que las del servicio.
+            var errores = contexto.ModelState
+                .Where(e => e.Value is { Errors.Count: > 0 })
+                .GroupBy(e => ClaveEnCamelCase(e.Key))
+                .ToDictionary(g => g.Key, g => g.SelectMany(e => e.Value!.Errors).Select(x => x.ErrorMessage).ToArray());
+
+            var detalle = new ValidationProblemDetails(errores)
             {
                 Status = StatusCodes.Status400BadRequest,
                 Title = "Datos inválidos",
@@ -58,3 +65,9 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
+
+static string ClaveEnCamelCase(string clave)
+{
+    var limpia = clave.StartsWith("$.", StringComparison.Ordinal) ? clave[2..] : clave;
+    return limpia.Length == 0 ? limpia : char.ToLowerInvariant(limpia[0]) + limpia[1..];
+}
